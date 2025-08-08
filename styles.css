@@ -462,6 +462,7 @@ header.logo img {
 
     .hero-section {
         margin: auto;
+        padding: 8px;
     }
 
     .hero-section h1 {
