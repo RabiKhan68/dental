@@ -460,6 +460,10 @@ header.logo img {
         transform: rotate(90deg);
     }
 
+    .hero-section h1 {
+        font-size: 15px;
+    }
+
     .testimonials h1 {
         font-size: 1.8rem;
     }
