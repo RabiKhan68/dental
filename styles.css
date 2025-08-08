@@ -275,6 +275,48 @@ header.logo img {
     font-style: italic;
 }
 
+.operations {
+    padding: 40px 20px;
+    background: linear-gradient(to bottom, #f8fbfd, #e8f3f9);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.operations h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #1c75bc;
+    /* Professional dental blue */
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.carding {
+    flex: 0 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    margin: 0 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.carding img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    border-radius: 10px;
+}
+
+.carding:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(44, 176, 232, 0.4);
+}
+
+.carding:hover img {
+    transform: scale(1.05);
+}
+
 .contact h1 {
     font-size: 3rem;
     margin-bottom: 30px;
@@ -327,6 +369,14 @@ header.logo img {
     flex: 1;
 }
 
+@media (min-width: 768px) {
+    .operations-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+    }
+}
+
 @media (max-width: 768px) {
     .glass {
         position: sticky;
@@ -334,13 +384,11 @@ header.logo img {
         z-index: 1000;
         backdrop-filter: blur(10px);
         background: rgba(255, 255, 255, 0.6);
-        /* Slightly less transparent */
         box-shadow: 0 8px 24px rgba(31, 38, 135, 0.15);
         border-bottom: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 0 0 16px 16px;
     }
 
-    /* Hidden nav state */
     .nav {
         max-height: 0;
         overflow: hidden;
@@ -348,15 +396,12 @@ header.logo img {
         top: 100%;
         left: 0;
         width: 100%;
-
-        /* Softer glass effect */
         background: rgba(255, 255, 255, 0.5);
         backdrop-filter: blur(5px) saturate(180%);
         -webkit-backdrop-filter: blur(5px) saturate(160%);
         border: 1px solid rgba(255, 255, 255, 0.25);
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         border-radius: 0 0 16px 16px;
-
         padding: 0;
         z-index: 999;
         opacity: 0;
@@ -364,7 +409,6 @@ header.logo img {
         transition: max-height 0.4s ease, opacity 0.4s ease, transform 0.4s ease, padding 0.3s ease;
     }
 
-    /* Visible nav state */
     .nav.show {
         max-height: 500px;
         opacity: 1;
@@ -400,7 +444,6 @@ header.logo img {
         color: #023e8a;
     }
 
-    /* Hamburger */
     .hamburger {
         display: block;
         z-index: 1001;
@@ -420,5 +463,35 @@ header.logo img {
 
     .review-card {
         padding: 15px;
+    }
+
+    /* ✅ Keep 2 cards per row for tablets & mobiles */
+    .operations-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        overflow-x: unset;
+    }
+
+    .carding {
+        min-width: unset;
+        scroll-snap-align: unset;
+        animation: heartbeatGlow 1.5s infinite;
+    }
+
+    @keyframes heartbeatGlow {
+        0% {
+            box-shadow: 0 0 5px #2cb0e8, 0 0 10px #2cb0e8, 0 0 15px #2cb0e8;
+        }
+        50% {
+            box-shadow: 0 0 10px #2cb0e8, 0 0 25px #2cb0e8, 0 0 30px #2cb0e8;
+        }
+        100% {
+            box-shadow: 0 0 5px #2cb0e8, 0 0 10px #2cb0e8, 0 0 15px #2cb0e8;
+        }
+    }
+
+    .operations-container::-webkit-scrollbar {
+        display: none;
     }
 }
