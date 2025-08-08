@@ -477,7 +477,10 @@ header.logo img {
         padding: 15px;
     }
 
-    /* ✅ Keep 2 cards per row for tablets & mobiles */
+    .contact {
+        padding: 8px;
+    }
+
     .operations-container {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
