@@ -175,20 +175,23 @@ header.logo img {
 }
 
 .map-container {
-    display: flex;
-    justify-content: center;
-    border-radius: 12px;
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    /* Keeps 16:9 aspect ratio */
+    height: 0;
     overflow: hidden;
-    max-width: 90%;
-    margin: 0 auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 .map-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    max-width: 800px;
-    height: 450px;
-    border: none;
-    border-radius: 12px;
+    height: 100%;
+    border: 0;
 }
 
 /* CONTACT SECTION */
@@ -483,9 +486,11 @@ header.logo img {
         0% {
             box-shadow: 0 0 5px #2cb0e8, 0 0 10px #2cb0e8, 0 0 15px #2cb0e8;
         }
+
         50% {
             box-shadow: 0 0 10px #2cb0e8, 0 0 25px #2cb0e8, 0 0 30px #2cb0e8;
         }
+
         100% {
             box-shadow: 0 0 5px #2cb0e8, 0 0 10px #2cb0e8, 0 0 15px #2cb0e8;
         }
@@ -493,5 +498,16 @@ header.logo img {
 
     .operations-container::-webkit-scrollbar {
         display: none;
+    }
+
+    .map-container {
+        padding-bottom: 70%;
+        border-radius: 0;
+    }
+
+    .map-container h1 {
+        font-size: 1.5rem;
+        text-align: center;
+        margin-bottom: 10px;
     }
 }
