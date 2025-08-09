@@ -120,7 +120,8 @@
         <h1>What Our Patients Say</h1>
 
         <div class="reviews" id="reviews">
-          <div class="review-card">
+          <!-- Static testimonials -->
+          <!-- <div class="review-card">
             <div class="stars">★★★★★</div>
             <p>"Dr. Ibtahaj Khan is extremely professional and caring. My root canal was completely painless!"</p>
             <span>- Sarah Ahmed</span>
@@ -150,7 +151,7 @@
             <p>"Dr Ibtahaj is well trained! I appreciate how he does his work. My tooth that was covered with cavity is
               now fixed. Now, I can eat peacefully!"</p>
             <span>- Rabi Khan</span>
-          </div>
+          </div> -->
         </div>
       </section>
 
@@ -171,87 +172,111 @@
         </form>
       </div>
 
-    </main>
+      <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import {
+          getFirestore,
+          collection,
+          addDoc,
+          getDocs,
+          serverTimestamp,
+          query,
+          orderBy
+        } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    <footer class="end">
-      <img src="assets/logo.jpg" alt="logo" />
-      <p>Copyright &copy; All Rights Reserved | Made by Rabi Khan Dev</p>
-    </footer>
-  </div>
+        // Your Firebase config
+        const firebaseConfig = {
+          apiKey: "AIzaSyA-fmIFlLbbuWEMFpbc0-WR_tY4AXDwAlc",
+          authDomain: "medical-aef67.firebaseapp.com",
+          projectId: "medical-aef67",
+          storageBucket: "medical-aef67.appspot.com",
+          messagingSenderId: "654842876141",
+          appId: "1:654842876141:web:a8f6efe9524be196617ce4"
+        };
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      getDocs,
-      serverTimestamp,
-      query,
-      orderBy
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        // Init Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyA-fmIFlLbbuWEMFpbc0-WR_tY4AXDwAlc", // your key here
-      authDomain: "medical-aef67.firebaseapp.com",
-      projectId: "medical-aef67",
-      storageBucket: "medical-aef67.appspot.com",
-      messagingSenderId: "654842876141",
-      appId: "1:654842876141:web:a8f6efe9524be196617ce4"
-    };
+        const reviewsContainer = document.getElementById("reviews");
+        const form = document.getElementById("commentForm");
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+        // Load reviews from Firestore (append to static ones)
+        async function loadReviews() {
+          reviewsContainer.innerHTML = "<p>Loading reviews...</p>";
+          try {
+            const q = query(collection(db, "reviews"), orderBy("timestamp", "desc"));
+            const querySnapshot = await getDocs(q);
 
-    const reviewsContainer = document.getElementById("reviews");
-    const form = document.getElementById("commentForm");
+            reviewsContainer.innerHTML = ""; // Clear loading message
 
-    async function loadReviews() {
-      reviewsContainer.innerHTML = "";
-      const q = query(collection(db, "reviews"), orderBy("timestamp", "desc"));
-      const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+              reviewsContainer.innerHTML = "<p>No comments yet. Be the first!</p>";
+              return;
+            }
 
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const stars = "★".repeat(data.rating) + "☆".repeat(5 - data.rating);
+            querySnapshot.forEach((doc) => {
+              const data = doc.data();
+              const stars = "★".repeat(data.rating) + "☆".repeat(5 - data.rating);
 
-        const review = document.createElement("div");
-        review.classList.add("review-card");
-        review.innerHTML = `
+              const review = document.createElement("div");
+              review.classList.add("review-card");
+              review.innerHTML = `
         <div class="stars">${stars}</div>
         <p>"${data.comment}"</p>
         <span>- ${data.name}</span>
       `;
-        reviewsContainer.appendChild(review);
-      });
-    }
+              reviewsContainer.appendChild(review);
+            });
+          } catch (error) {
+            console.error("Error loading reviews:", error);
+            reviewsContainer.innerHTML = "<p>Error loading reviews.</p>";
+          }
+        }
+        // Add new review
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+          const name = document.getElementById("commentName").value.trim();
+          const comment = document.getElementById("commentText").value.trim();
+          const rating = parseInt(document.querySelector('input[name="rating"]:checked')?.value || 0);
 
-      const name = document.getElementById("commentName").value.trim();
-      const comment = document.getElementById("commentText").value.trim();
-      const rating = parseInt(document.querySelector('input[name="rating"]:checked')?.value || 0);
+          if (!name || !comment || rating === 0) {
+            alert("Please fill in all fields and select a rating.");
+            return;
+          }
 
-      if (!name || !comment || rating === 0) {
-        alert("Please fill in all fields and select a rating.");
-        return;
-      }
+          try {
+            await addDoc(collection(db, "reviews"), {
+              name,
+              comment,
+              rating,
+              timestamp: serverTimestamp()
+            });
 
-      await addDoc(collection(db, "reviews"), {
-        name,
-        comment,
-        rating,
-        timestamp: serverTimestamp()
-      });
+            // Show the new review immediately without reload
+            const stars = "★".repeat(rating) + "☆".repeat(5 - rating);
+            const newReview = document.createElement("div");
+            newReview.classList.add("review-card");
+            newReview.innerHTML = `
+        <div class="stars">${stars}</div>
+        <p>"${comment}"</p>
+        <span>- ${name}</span>
+      `;
+            reviewsContainer.appendChild(newReview);
 
-      form.reset();
-      loadReviews();
-    });
+            form.reset();
+          } catch (error) {
+            console.error("Error saving review:", error);
+            alert("There was an error submitting your review. Please try again.");
+          }
+        });
 
-    loadReviews();
-  </script>
-  <script src="script.js"></script>
+        // Initial load (keeps static ones)
+        loadReviews();
+      </script>
+
+      <script src="script.js"></script>
 
 </body>
 
