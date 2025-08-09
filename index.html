@@ -180,8 +180,8 @@
   </div>
 
   <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    // Firebase imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import {
       getFirestore,
       collection,
@@ -190,23 +190,24 @@
       serverTimestamp,
       query,
       orderBy
-    } from "https://www.gstatic.com/firebase/12.1.0/firebase-firestore.js";
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyA-fmIFlLbbuWEMFpbc0-WR_tY4AXDwAlc",
       authDomain: "medical-aef67.firebaseapp.com",
       projectId: "medical-aef67",
-      storageBucket: "medical-aef67.firebasestorage.app",
+      storageBucket: "medical-aef67.appspot.com",
       messagingSenderId: "654842876141",
       appId: "1:654842876141:web:a8f6efe9524be196617ce4"
     };
 
-    // Initialize Firebase
+    // Init Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const reviewsContainer = document.getElementById('reviews');
-    const form = document.getElementById('commentForm');
+    const reviewsContainer = document.getElementById("reviews");
+    const form = document.getElementById("commentForm");
 
     // Load reviews from Firestore
     async function loadReviews() {
@@ -227,11 +228,14 @@
       });
     }
 
+    // Add new review
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = document.getElementById("commentName").value.trim();
       const comment = document.getElementById("commentText").value.trim();
-      const rating = parseInt(document.querySelector('input[name="rating"]:checked')?.value || 0);
+      const rating = parseInt(
+        document.querySelector('input[name="rating"]:checked')?.value || 0
+      );
 
       if (!name || !comment || rating === 0) {
         alert("Please fill in all fields and select a rating.");
@@ -246,10 +250,10 @@
       });
 
       form.reset();
-      loadReviews(); // Refresh list
+      loadReviews();
     });
 
-    // Load reviews on page load
+    // Initial load
     loadReviews();
   </script>
   <script src="script.js"></script>
