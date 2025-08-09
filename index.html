@@ -50,30 +50,30 @@
     <section class="operations">
       <h1>Before vs After</h1>
       <div class="operations-container">
-      <div class="carding">
-        <img src = "assets/op1.jpg" alt="op">
-      </div>
-      <div class="carding">
-        <img src = "assets/op2.jpg" alt="op">
-      </div>
-      <div class="carding">
-        <img src = "assets/op3.jpg" alt="op">
-      </div>
-      <div class="carding">
-        <img src = "assets/op4.jpg" alt="op">
-      </div>
-      <div class="carding">
-        <img src = "assets/op5.jpg" alt="op">
-      </div>
-      <div class="carding">
-        <img src = "assets/op6.jpg" alt="op">
-      </div>
-      <div class="carding">
-        <img src = "assets/op7.jpg" alt="op">
-      </div>
-      <div class="carding">
-        <img src = "assets/op8.jpg" alt="op">
-      </div>
+        <div class="carding">
+          <img src="assets/op1.jpg" alt="op">
+        </div>
+        <div class="carding">
+          <img src="assets/op2.jpg" alt="op">
+        </div>
+        <div class="carding">
+          <img src="assets/op3.jpg" alt="op">
+        </div>
+        <div class="carding">
+          <img src="assets/op4.jpg" alt="op">
+        </div>
+        <div class="carding">
+          <img src="assets/op5.jpg" alt="op">
+        </div>
+        <div class="carding">
+          <img src="assets/op6.jpg" alt="op">
+        </div>
+        <div class="carding">
+          <img src="assets/op7.jpg" alt="op">
+        </div>
+        <div class="carding">
+          <img src="assets/op8.jpg" alt="op">
+        </div>
       </div>
     </section>
 
@@ -179,6 +179,73 @@
     </footer>
   </div>
 
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-fmIFlLbbuWEMFpbc0-WR_tY4AXDwAlc",
+      authDomain: "medical-aef67.firebaseapp.com",
+      projectId: "medical-aef67",
+      storageBucket: "medical-aef67.firebasestorage.app",
+      messagingSenderId: "654842876141",
+      appId: "1:654842876141:web:a8f6efe9524be196617ce4"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const reviewsContainer = document.getElementById('reviews');
+    const form = document.getElementById('commentForm');
+
+    // Load reviews from Firestore
+    async function loadReviews() {
+      reviewsContainer.innerHTML = "";
+      const q = query(collection(db, "reviews"), orderBy("timestamp", "desc"));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const stars = "★".repeat(data.rating) + "☆".repeat(5 - data.rating);
+        const review = document.createElement("div");
+        review.classList.add("review-card");
+        review.innerHTML = `
+        <div class="stars">${stars}</div>
+        <p>"${data.comment}"</p>
+        <span>- ${data.name}</span>
+      `;
+        reviewsContainer.appendChild(review);
+      });
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("commentName").value.trim();
+      const comment = document.getElementById("commentText").value.trim();
+      const rating = parseInt(document.querySelector('input[name="rating"]:checked')?.value || 0);
+
+      if (!name || !comment || rating === 0) {
+        alert("Please fill in all fields and select a rating.");
+        return;
+      }
+
+      await addDoc(collection(db, "reviews"), {
+        name,
+        comment,
+        rating,
+        timestamp: serverTimestamp()
+      });
+
+      form.reset();
+      loadReviews(); // Refresh list
+    });
+
+    // Load reviews on page load
+    loadReviews();
+  </script>
   <script src="script.js"></script>
 
 </body>
